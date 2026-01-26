@@ -1,16 +1,37 @@
-# SSL-enabled Postgres DB image
+# SSL-enabled Postgres 17 image
 
-This repository contains the logic to build SSL-enabled Postgres images.
-
-By default, when you deploy Postgres from the official Postgres template on
-Railway, the image that is used is built from this repository!
+This repository builds an SSL-enabled PostgreSQL 17 image with additional
+extensions pre-installed. PostgreSQL 17 is used to match PGLite's version.
 
 [![Deploy on
 Railway](https://railway.app/button.svg)](https://railway.app/template/postgres)
 
-### Why though?
+### Benefits over the standard Railway Postgres template
 
-The official Postgres image in Docker hub does not come with SSL baked in.
+This image provides several advantages over the default Railway Postgres template:
+
+- **SSL enabled out of the box** - Secure connections without manual configuration
+- **Pre-installed extensions** ready to use with `CREATE EXTENSION`:
+  - **pg_uuidv7** - Generate UUIDv7 values (time-sortable UUIDs)
+  - **pg_hashids** - Create short, unique, non-sequential IDs from numbers
+  - **pgvector** - Vector similarity search for AI/ML embeddings
+  - **pg_ivm** - Incremental View Maintenance for efficient materialized view updates
+- **Automatic certificate renewal** - SSL certs are refreshed on restart if expiring soon
+
+### PGLite Parity
+
+This image is designed to maintain extension parity with
+[PGLite](https://pglite.dev/extensions/), enabling you to use PGLite for fast
+local development and testing while deploying to this production Postgres image
+with confidence.
+
+All extensions listed above are available in both PGLite and this image.
+
+**Roadmap:** PostGIS support will be added once PGLite supports it.
+
+### Why SSL?
+
+The official Postgres image in Docker Hub does not come with SSL baked in.
 
 Since this could pose a problem for applications or services attempting to
 connect to Postgres services, we decided to roll our own Postgres image with SSL
@@ -34,14 +55,12 @@ expired or will expire in 30 days a new certificate is automatically generated.
 
 ### Available image tags
 
-Images are automatically built weekly and tagged with multiple version levels
-for flexibility:
+Images are automatically built weekly. Only PostgreSQL 17 is supported to
+maintain parity with PGLite.
 
-- **Major version tags** (e.g., `:17`, `:16`, `:15`): Always points to the
-  latest minor version for that major release
-- **Minor version tags** (e.g., `:17.6`, `:16.10`): Pins to specific minor
-  version for stability
-- **Latest tag** (`:latest`): Currently points to PostgreSQL 16
+- **`:17`** - Always points to the latest 17.x minor version
+- **`:17.x`** (e.g., `:17.6`) - Pins to a specific minor version for stability
+- **`:latest`** - Points to PostgreSQL 17
 
 Example usage:
 
