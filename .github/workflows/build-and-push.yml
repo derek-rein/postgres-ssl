@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 env:
-  LATEST_POSTGRES_MAJOR: 16  # Change this to update which version gets tagged as 'latest'
+  LATEST_POSTGRES_MAJOR: 17  # Change this to update which version gets tagged as 'latest'
 
 jobs:
   build-postgres:
@@ -18,7 +18,7 @@ jobs:
 
     strategy:
       matrix:
-        postgres_major: [13, 14, 15, 16, 17]
+        postgres_major: [17]
 
     steps:
       - name: Checkout sources
@@ -32,6 +32,12 @@ jobs:
           echo "minor_version=${MINOR_VERSION}" >> $GITHUB_OUTPUT
           
           echo "Building PostgreSQL $MINOR_VERSION with tags: ${{ matrix.postgres_major }}, ${MINOR_VERSION}"
+
+      - name: Set lowercase repository name
+        id: repo
+        run: |
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          echo "name=${REPO_LOWER}" >> $GITHUB_OUTPUT
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -57,7 +63,7 @@ jobs:
           build-args: |
             POSTGRES_VERSION=${{ steps.get_version.outputs.minor_version }}
           tags: |
-            ghcr.io/${{ github.repository }}:${{ matrix.postgres_major }}
-            ghcr.io/${{ github.repository }}:${{ steps.get_version.outputs.minor_version }}
-            ${{ matrix.postgres_major == env.LATEST_POSTGRES_MAJOR && format('ghcr.io/{0}:latest', github.repository) || '' }}
+            ghcr.io/${{ steps.repo.outputs.name }}:${{ matrix.postgres_major }}
+            ghcr.io/${{ steps.repo.outputs.name }}:${{ steps.get_version.outputs.minor_version }}
+            ${{ matrix.postgres_major == env.LATEST_POSTGRES_MAJOR && format('ghcr.io/{0}:latest', steps.repo.outputs.name) || '' }}
 

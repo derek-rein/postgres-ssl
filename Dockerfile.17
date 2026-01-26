@@ -1,8 +1,48 @@
 ARG POSTGRES_VERSION=17
 FROM postgres:${POSTGRES_VERSION}
 
-# Install OpenSSL and sudo
-RUN apt-get update && apt-get install -y openssl sudo
+# Install OpenSSL, sudo, PostGIS, and build dependencies for pg_hashids
+RUN apt-get update && apt-get install -y \
+    openssl \
+    sudo \
+    postgresql-17-postgis-3 \
+    postgresql-server-dev-17 \
+    git \
+    make \
+    gcc \
+    && rm -rf /var/lib/apt/lists/*
+
+# Build and install pg_hashids from source
+RUN git clone https://github.com/iCyberon/pg_hashids.git /tmp/pg_hashids && \
+    cd /tmp/pg_hashids && \
+    USE_PGXS=1 make && \
+    USE_PGXS=1 make install && \
+    cd / && \
+    rm -rf /tmp/pg_hashids
+
+# Build and install pg_uuidv7 from source
+RUN git clone https://github.com/fboulnois/pg_uuidv7.git /tmp/pg_uuidv7 && \
+    cd /tmp/pg_uuidv7 && \
+    make && \
+    make install && \
+    cd / && \
+    rm -rf /tmp/pg_uuidv7
+
+# Build and install pgvector from source
+RUN git clone https://github.com/pgvector/pgvector.git /tmp/pgvector && \
+    cd /tmp/pgvector && \
+    make && \
+    make install && \
+    cd / && \
+    rm -rf /tmp/pgvector
+
+# Build and install pg_ivm from source
+RUN git clone https://github.com/sraoss/pg_ivm.git /tmp/pg_ivm && \
+    cd /tmp/pg_ivm && \
+    make && \
+    make install && \
+    cd / && \
+    rm -rf /tmp/pg_ivm
 
 # Allow the postgres user to execute certain commands as root without a password
 RUN echo "postgres ALL=(root) NOPASSWD: /usr/bin/mkdir, /bin/chown, /usr/bin/openssl" > /etc/sudoers.d/postgres
