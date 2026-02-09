@@ -12,10 +12,13 @@ This image provides several advantages over the default Railway Postgres templat
 
 - **SSL enabled out of the box** - Secure connections without manual configuration
 - **Pre-installed extensions** ready to use with `CREATE EXTENSION`:
+  - **PostGIS** - Spatial and geographic objects for PostgreSQL
   - **pg_uuidv7** - Generate UUIDv7 values (time-sortable UUIDs)
   - **pg_hashids** - Create short, unique, non-sequential IDs from numbers
   - **pgvector** - Vector similarity search for AI/ML embeddings
   - **pg_ivm** - Incremental View Maintenance for efficient materialized view updates
+- **Built-in functions:**
+  - **nanoid()** - Generate compact, URL-friendly unique IDs (auto-loaded via init script, available in the `public` schema of the default database only)
 - **Automatic certificate renewal** - SSL certs are refreshed on restart if expiring soon
 
 ### PGLite Parity
@@ -26,8 +29,6 @@ local development and testing while deploying to this production Postgres image
 with confidence.
 
 All extensions listed above are available in both PGLite and this image.
-
-**Roadmap:** PostGIS support will be added once PGLite supports it.
 
 ### Why SSL?
 
