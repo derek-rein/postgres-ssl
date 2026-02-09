@@ -3,8 +3,7 @@
 This repository builds an SSL-enabled PostgreSQL 17 image with additional
 extensions pre-installed. PostgreSQL 17 is used to match PGLite's version.
 
-[![Deploy on
-Railway](https://railway.app/button.svg)](https://railway.app/template/postgres)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/deploy/daaDbI?referralCode=euHblX&utm_medium=integration&utm_source=template&utm_campaign=generic)
 
 ### Benefits over the standard Railway Postgres template
 
